@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import SearchBar from "@/app/components/search-bar";
 import DataTable from "@/app/components/data-table";
+import Pagination from "@/app/components/pagination";
 import { Advocate } from "@/app/types/advocate";
 
 
-function AdvocateTable() {
+export default function AdvocateTable() {
     const [advocates, setAdvocates] = useState([]);
     const [filteredAdvocates, setFilteredAdvocates] = useState([]);
-    let [searchText, setSearchText] = useState("");
+    const [searchText, setSearchText] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         console.log("fetching advocates...");
@@ -47,20 +49,42 @@ function AdvocateTable() {
         setFilteredAdvocates(advocates);
     };
 
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
     return (
-        <main>
-            <h1>Solace Advocates</h1>
-            <SearchBar
-                searchText={searchText}
-                handleSearch={filterAdvocates}
-                handleClearFilter={clearFilter}
-            />
-            <DataTable
-                filteredAdvocates={filteredAdvocates}
-                isLoading={false}
-            />
-        </main>
+        <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+            <div className="flex flex-col">
+                <div className="-m-1.5 overflow-x-auto">
+                    <div className="p-1.5 min-w-full inline-block align-middle">
+                        <div className="bg-white border border-gray-200 rounded-xl shadow-2xs overflow-hidden">
+                            {/* Header */}
+                            <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200">
+                                <div>
+                                    <h2 className="text-xl font-semibold text-green-800">
+                                        Solace Advocates
+                                    </h2>
+                                </div>
+
+                                <div>
+                                    <div className="inline-flex gap-x-2">
+                                        <div className="max-w-sm space-y-3">
+                                            <SearchBar
+                                                searchText={searchText}
+                                                handleSearch={filterAdvocates}
+                                                handleClearFilter={clearFilter}
+                                            /></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* End Header */}
+                            <DataTable filteredAdvocates={filteredAdvocates} isLoading={false} />
+                            <Pagination currentPage={currentPage} totalPages={Math.ceil(filteredAdvocates.length / 10)} onPageChange={handlePageChange} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
-
-export default AdvocateTable;
