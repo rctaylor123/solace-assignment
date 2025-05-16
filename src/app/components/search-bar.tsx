@@ -6,17 +6,16 @@ interface SearchBarProps {
     handleClearFilter: () => void;
 }
 
-function SearchBar({ searchText, handleSearch, handleClearFilter }: SearchBarProps) {
+export default function SearchBar({ searchText, handleSearch, handleClearFilter }: SearchBarProps) {
     return (
-        <div>
-            <p>Search</p>
-            <p>
-                Searching for: <span id="search-term">{searchText}</span>
-            </p>
-            <input value={searchText} style={{ border: "1px solid black" }} onChange={(e) => handleSearch(e.target.value)} />
-            <button onClick={handleClearFilter}>Reset Search</button>
-        </div>
+    <div className="max-w-sm space-y-3">
+        <input
+            type="text"
+            className="py-2.5 sm:py-3 px-4 block w-full border border-gray-300 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+            placeholder="Filter Advocates"
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+        />
+      </div>
     );
 }
-
-export default SearchBar;
