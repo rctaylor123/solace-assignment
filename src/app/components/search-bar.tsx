@@ -3,10 +3,9 @@ import React from 'react';
 interface SearchBarProps {
   searchText: string;
   handleSearch: (search: string) => void;
-  handleClearFilter: () => void;
 }
 
-export default function SearchBar({ searchText, handleSearch, handleClearFilter }: SearchBarProps) {
+export default function SearchBar({ searchText, handleSearch }: SearchBarProps) {
   return (
     <div className='max-w-sm space-y-3'>
       <input

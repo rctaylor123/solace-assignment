@@ -7,17 +7,23 @@ import { Advocate } from '@/app/types/advocate';
 export default function AdvocateTable() {
   const [advocates, setAdvocates] = useState([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     console.log('fetching advocates...');
-    fetch('/api/advocates').then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
+    setIsLoading(true);
+    fetch('/api/advocates')
+      .then((response) => {
+        response.json().then((jsonResponse) => {
+          setAdvocates(jsonResponse.data);
+          setFilteredAdvocates(jsonResponse.data);
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    });
   }, []);
 
   const filterAdvocates = (search: string) => {
@@ -43,11 +49,6 @@ export default function AdvocateTable() {
     setFilteredAdvocates(filteredAdvocates);
   };
 
-  const clearFilter = () => {
-    setSearchText('');
-    setFilteredAdvocates(advocates);
-  };
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -67,22 +68,20 @@ export default function AdvocateTable() {
                 <div>
                   <div className='inline-flex gap-x-2'>
                     <div className='max-w-sm space-y-3'>
-                      <SearchBar
-                        searchText={searchText}
-                        handleSearch={filterAdvocates}
-                        handleClearFilter={clearFilter}
-                      />
+                      <SearchBar searchText={searchText} handleSearch={filterAdvocates} />
                     </div>
                   </div>
                 </div>
               </div>
               {/* End Header */}
-              <DataTable filteredAdvocates={filteredAdvocates} isLoading={false} />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={Math.ceil(filteredAdvocates.length / 10)}
-                onPageChange={handlePageChange}
-              />
+              <DataTable filteredAdvocates={filteredAdvocates} isLoading={isLoading} />
+              {!isLoading && filteredAdvocates.length > 0 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(filteredAdvocates.length / 10)}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </div>
           </div>
         </div>

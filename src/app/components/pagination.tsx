@@ -41,7 +41,7 @@ export default function Pagination({ totalPages, currentPage, onPageChange }: Pa
   );
 }
 
-function PageNumberButton({page, isActive, onClick}: {page: number; isActive: boolean; onClick: () => void;}) {
+function PageNumberButton({ page, isActive, onClick }: { page: number; isActive: boolean; onClick: () => void }) {
   return (
     <button
       type='button'
