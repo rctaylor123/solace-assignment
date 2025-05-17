@@ -1,5 +1,6 @@
 import React from 'react';
 import { Advocate } from '@/app/types/advocate';
+import Spinner from './spinner';
 
 interface DataTableProps {
   filteredAdvocates: Array<Advocate>;
@@ -16,6 +17,14 @@ export default function DataTable({ filteredAdvocates, isLoading }: DataTablePro
     'Years of Experience',
     'Phone Number'
   ];
+
+  if (isLoading) {
+    return (
+      <div className='m-5 flex items-center justify-center'>
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <table className='min-w-full divide-y divide-gray-200'>
