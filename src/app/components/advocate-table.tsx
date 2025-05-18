@@ -1,56 +1,58 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+
 import SearchBar from '@/app/components/search-bar';
 import DataTable from '@/app/components/data-table';
 import Pagination from '@/app/components/pagination';
 import { Advocate } from '@/app/types/advocate';
 
 export default function AdvocateTable() {
-  const [advocates, setAdvocates] = useState([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [totalAdvocates, setTotalAdvocates] = useState(0);
+  const [pageSize] = useState(5);
+  
   useEffect(() => {
-    console.log('fetching advocates...');
+    const debounce = setTimeout(() => {
+      setCurrentPage(1); // Reset to the first page when searching
+      filterAdvocates(searchText, 1);
+    }, 500);
+    return () => {
+      clearTimeout(debounce);
+    };
+  }, [searchText]);
+
+  const filterAdvocates = (search: string, page: number) => {
     setIsLoading(true);
-    fetch('/api/advocates')
+    axios
+      .get('/api/advocates', {
+        params: {
+          search: search,
+          page: page,
+          pageSize: pageSize
+        }
+      })
       .then((response) => {
-        response.json().then((jsonResponse) => {
-          setAdvocates(jsonResponse.data);
-          setFilteredAdvocates(jsonResponse.data);
-        });
+        setFilteredAdvocates(response.data.advocates);
+        setTotalAdvocates(response.data.totalCount);
+      })
+      .catch((error) => {
+        console.error('Error fetching advocates:', error);
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  };
 
-  const filterAdvocates = (search: string) => {
+  const handleSearchChange = (search: string) => {
     setSearchText(search);
-
-    if (!search) {
-      setFilteredAdvocates(advocates);
-      return;
-    }
-
-    console.log('filtering advocates... ' + search);
-    const filteredAdvocates = advocates.filter((advocate: Advocate) => {
-      return (
-        advocate.firstName.includes(search) ||
-        advocate.lastName.includes(search) ||
-        advocate.city.includes(search) ||
-        advocate.degree.includes(search) ||
-        advocate.specialties.includes(search) ||
-        advocate.yearsOfExperience.toString().includes(search)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    filterAdvocates(searchText, page);
   };
 
   return (
@@ -68,17 +70,17 @@ export default function AdvocateTable() {
                 <div>
                   <div className='inline-flex gap-x-2'>
                     <div className='max-w-sm space-y-3'>
-                      <SearchBar searchText={searchText} handleSearch={filterAdvocates} />
+                      <SearchBar searchText={searchText} handleSearch={handleSearchChange} />
                     </div>
                   </div>
                 </div>
               </div>
               {/* End Header */}
               <DataTable filteredAdvocates={filteredAdvocates} isLoading={isLoading} />
-              {!isLoading && filteredAdvocates.length > 0 && (
+              {!isLoading && totalAdvocates > 0 && (
                 <Pagination
                   currentPage={currentPage}
-                  totalPages={Math.ceil(filteredAdvocates.length / 10)}
+                  totalPages={Math.ceil(totalAdvocates / pageSize)}
                   onPageChange={handlePageChange}
                 />
               )}
