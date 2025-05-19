@@ -86,7 +86,7 @@ function Specialties({ specialties }: { specialties: Array<string> }) {
   return (
     <div className='w-md flex flex-wrap gap-x-2 gap-y-1'>
       {specialties.map((s: string, i: number) => (
-        <span key={i} className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium bg-green-100 text-green-800">{s}</span>
+        <span key={i} className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium bg-green-200 text-green-800">{s}</span>
       ))}
     </div>
   );
