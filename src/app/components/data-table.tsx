@@ -50,11 +50,7 @@ export default function DataTable({ filteredAdvocates, isLoading }: DataTablePro
                 <TableCell>{advocate.city}</TableCell>
                 <TableCell>{advocate.degree}</TableCell>
                 <TableCell>
-                  <ul className='list-disc space-y-2 ps-5 text-sm text-gray-600 marker:text-green-800'>
-                    {advocate.specialties.map((s: string, i: number) => (
-                      <li key={i}>{s}</li>
-                    ))}
-                  </ul>
+                  <Specialties specialties={advocate.specialties} />
                 </TableCell>
                 <TableCell>{advocate.yearsOfExperience}</TableCell>
                 <TableCell>{advocate.phoneNumber}</TableCell>
@@ -83,5 +79,15 @@ function TableCell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
     </td>
+  );
+}
+
+function Specialties({ specialties }: { specialties: Array<string> }) {
+  return (
+    <div className='w-md flex flex-wrap gap-x-2 gap-y-1'>
+      {specialties.map((s: string, i: number) => (
+        <span key={i} className="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium bg-green-100 text-green-800">{s}</span>
+      ))}
+    </div>
   );
 }
